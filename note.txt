@@ -1,1 +1,30 @@
-weee!!!!
+connect with mogondb, create schema
+schema contains -
+useremail,sessionId, 
+video [
+    url:
+    reminder:
+    Emailsend:
+    Timeofsend:
+    Reach: false
+]
+
+profile -
+create textarea, reminder, save button
+
+send email to user along the video url, when reminder == Timeofsend
+if user dont click the email within Timeofsend+6h, it will send mail again.
+update schmea that reach false
+
+
+
+
+monngoose will receive this data. and store it.
+
+
+
+
+
+
+Bascially the stack is simple _ I like to create something that will track user "watch later" marked video. Later it will send message to user - email actually that you didnt see the video yet?
+Watch later you get that? I am talking about youtube - where user save the video to Watch Later playlist
