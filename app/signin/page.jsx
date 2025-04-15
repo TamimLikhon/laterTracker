@@ -1,5 +1,5 @@
 "use client";
-import Login from "@/components/ui/auth/login";
+import Login from "@/app/components/ui/auth/login";
 export default function SignIn() {
 
     return(

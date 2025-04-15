@@ -23,8 +23,6 @@ monngoose will receive this data. and store it.
 
 
 
+reminder data send, stored 
+create a side panel where previous reminder will shown, user can delete it
 
-
-
-Bascially the stack is simple _ I like to create something that will track user "watch later" marked video. Later it will send message to user - email actually that you didnt see the video yet?
-Watch later you get that? I am talking about youtube - where user save the video to Watch Later playlist

@@ -1,4 +1,4 @@
-import BlogSection from "@/components/ui/homepage/blog-section";
+import BlogSection from "@/app/components/ui/homepage/blog-section";
 
 export default function BlogPage(){
     return(

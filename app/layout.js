@@ -1,7 +1,7 @@
-import Navbar from '@/components/Header/navbar';
+import Navbar from '@/app/components/Header/navbar';
 import './globals.css';
-import SessionWrapper from '@/components/ui/auth/sessionWrapper';
-import Footer from '@/components/footer';
+import SessionWrapper from '@/app/components/ui/auth/sessionWrapper';
+import Footer from '@/app/components/footer';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

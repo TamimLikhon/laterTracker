@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import NewsLetter from "@/components/ui/homepage/newsletter";
-import TrustedCompanyLogo from "@/components/ui/homepage/trusted-logo";
-import Testimonials from "@/components/ui/homepage/Testimonials";
-import BlogSection from "@/components/ui/homepage/blog-section";
+import NewsLetter from "@/app/components/ui/homepage/newsletter";
+import TrustedCompanyLogo from "@/app/components/ui/homepage/trusted-logo";
+import Testimonials from "@/app/components/ui/homepage/Testimonials";
+import BlogSection from "@/app/components/ui/homepage/blog-section";
 export default function Home() {
   return (
     <div className="bg-white">
@@ -42,7 +42,7 @@ export default function Home() {
           <div className="mt-10 flex items-center justify-center gap-x-6">
           <button
               onClick={() => signIn()}
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Get started
             </button>
