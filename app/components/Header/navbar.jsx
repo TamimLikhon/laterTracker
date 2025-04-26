@@ -87,32 +87,39 @@ export default function Navbar() {
                             Home
                         </Link>
                         <Link 
-                            href="/userProfile" 
+                            href="/profile" 
                             className="block px-3 py-2 rounded-md text-center hover:bg-gray-800 hover:text-blue-500 transition" 
                             onClick={() => setIsOpen(false)}
                         >
                             Profile
                         </Link>
                         <Link 
-                            href="/createpost" 
+                            href="/pricing" 
                             className="block px-3 py-2 rounded-md text-center hover:bg-gray-800 hover:text-blue-500 transition" 
                             onClick={() => setIsOpen(false)}
                         >
-                            Write a Blog
+                            Pricing
                         </Link>
                         <Link 
-                            href="/feeds" 
+                            href="/blogs" 
                             className="block px-3 py-2 rounded-md text-center hover:bg-gray-800 hover:text-blue-500 transition" 
                             onClick={() => setIsOpen(false)}
                         >
-                            Feed
+                            Blogs
                         </Link>
                         <Link 
-                            href="/following-feeds" 
+                            href="/reminder" 
                             className="block px-3 py-2 rounded-md text-center hover:bg-gray-800 hover:text-blue-500 transition" 
                             onClick={() => setIsOpen(false)}
                         >
-                            Vibe
+                            Reminder
+                        </Link>
+                        <Link 
+                            href="/contact" 
+                            className="block px-3 py-2 rounded-md text-center hover:bg-gray-800 hover:text-blue-500 transition" 
+                            onClick={() => setIsOpen(false)}
+                        >
+                            Contact
                         </Link>
                     </div>
                     <div className="pt-4 pb-6 px-4 flex justify-center">
