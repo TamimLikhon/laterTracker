@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
+import { NextResponse } from 'next/server';
 
 // MongoDB setup
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -28,15 +29,12 @@ async function sendReminderEmail(to, url) {
   console.log(`✅ Reminder sent to ${to}`);
 }
 
-export default async function handler(req, res) {
-  // Only allow POST requests with a secret key for security
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+export async function POST(request) {
+  const body = await request.json();
   
   // Verify a secret key to prevent unauthorized access
-  if (req.body.secretKey !== process.env.CRON_SECRET_KEY) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (body.secretKey !== process.env.CRON_SECRET_KEY) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -73,12 +71,12 @@ export default async function handler(req, res) {
 
     await client.close();
     
-    return res.status(200).json({ 
+    return NextResponse.json({ 
       processed: reminders.length,
       results 
     });
   } catch (err) {
     console.error("❌ Error checking reminders", err);
-    return res.status(500).json({ error: err.message });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
