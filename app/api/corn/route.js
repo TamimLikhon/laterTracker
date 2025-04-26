@@ -1,10 +1,11 @@
 import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
 
+// MongoDB and Nodemailer setup outside the handler (so it's reused)
 const MONGODB_URI = process.env.MONGODB_URI;
-const client = new MongoClient(MONGODB_URI);
 const dbName = "WatchReminder";
 const collectionName = "reminders";
+const client = new MongoClient(MONGODB_URI);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -21,10 +22,11 @@ async function sendReminderEmail(to, url) {
     subject: "⏰ YouTube Video Reminder",
     text: `Hey! This is your reminder to watch: ${url}`,
   };
+
   await transporter.sendMail(mailOptions);
 }
 
-export async function GET() {
+async function checkReminders() {
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -41,17 +43,27 @@ export async function GET() {
         await collection.updateOne(
           { _id: new ObjectId(_id) },
           {
-            $set: { reminderSent: true, reminderSentTime: new Date() },
+            $set: {
+              reminderSent: true,
+              reminderSentTime: new Date(),
+            },
           }
         );
       } catch (err) {
-        console.error("Failed to send email", err);
+        console.error(`❌ Failed to send email to ${userEmail}`, err);
       }
     }
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (error) {
-    console.error("Error checking reminders:", error);
-    return new Response(JSON.stringify({ success: false }), { status: 500 });
+    return `✅ Processed ${reminders.length} reminders`;
+  } catch (err) {
+    console.error("❌ Error checking reminders", err);
+    return "❌ Error checking reminders";
+  } finally {
+    await client.close(); // Close connection after done
   }
+}
+
+export async function GET(request) {
+  const result = await checkReminders();
+  return new Response(result);
 }
