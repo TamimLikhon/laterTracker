@@ -1,12 +1,12 @@
 import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
 
-// MongoDB and Nodemailer setup outside the handler (so it's reused)
+// MongoDB setup
 const MONGODB_URI = process.env.MONGODB_URI;
 const dbName = "WatchReminder";
 const collectionName = "reminders";
-const client = new MongoClient(MONGODB_URI);
 
+// Nodemailer setup
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -15,6 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Email sender function
 async function sendReminderEmail(to, url) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -24,11 +25,24 @@ async function sendReminderEmail(to, url) {
   };
 
   await transporter.sendMail(mailOptions);
+  console.log(`✅ Reminder sent to ${to}`);
 }
 
-async function checkReminders() {
+export default async function handler(req, res) {
+  // Only allow POST requests with a secret key for security
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  
+  // Verify a secret key to prevent unauthorized access
+  if (req.body.secretKey !== process.env.CRON_SECRET_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   try {
+    const client = new MongoClient(MONGODB_URI);
     await client.connect();
+    
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
@@ -37,6 +51,7 @@ async function checkReminders() {
       .find({ reminderTime: { $lte: now }, reminderSent: false })
       .toArray();
 
+    const results = [];
     for (const { _id, userEmail, url } of reminders) {
       try {
         await sendReminderEmail(userEmail, url);
@@ -49,21 +64,21 @@ async function checkReminders() {
             },
           }
         );
+        results.push({ email: userEmail, status: 'sent' });
       } catch (err) {
         console.error(`❌ Failed to send email to ${userEmail}`, err);
+        results.push({ email: userEmail, status: 'failed', error: err.message });
       }
     }
 
-    return `✅ Processed ${reminders.length} reminders`;
+    await client.close();
+    
+    return res.status(200).json({ 
+      processed: reminders.length,
+      results 
+    });
   } catch (err) {
     console.error("❌ Error checking reminders", err);
-    return "❌ Error checking reminders";
-  } finally {
-    await client.close(); // Close connection after done
+    return res.status(500).json({ error: err.message });
   }
-}
-
-export async function GET(request) {
-  const result = await checkReminders();
-  return new Response(result);
 }
