@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 // MongoDB setup
-
 const MONGODB_URI = process.env.MONGODB_URI;
 const dbName = "WatchReminder";
 const collectionName = "reminders";
@@ -28,21 +27,16 @@ async function sendReminderEmail(to, url) {
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`✅ Reminder sent to ${to} at`, new Date().toLocaleString());
+  console.log(`✅ Reminder sent to ${to}`);
 }
 
-
 // Check reminders and send emails
-let lastCheckedTime = null;
-
 async function checkReminders() {
-  const now = new Date();
-  console.log(`\n🔍 Checking for reminders at: ${now.toLocaleString()}`);
-
   try {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
+    const now = new Date();
     const reminders = await collection
       .find({ reminderTime: { $lte: now }, reminderSent: false })
       .toArray();
@@ -63,28 +57,18 @@ async function checkReminders() {
         console.error(`❌ Failed to send email to ${userEmail}`, err);
       }
     }
-
-    lastCheckedTime = now;
   } catch (err) {
     console.error("❌ Error checking reminders", err);
   }
 }
 
-
-// Start server and schedule reminders
+// Start polling
 async function startServer() {
   try {
     await client.connect();
     console.log("✅ Connected to MongoDB");
-
     await checkReminders(); // Run immediately
-
-    setInterval(async () => {
-      await checkReminders();
-      if (lastCheckedTime) {
-        console.log(`🕒 Last checked at: ${lastCheckedTime.toLocaleString()}`);
-      }
-    }, 5 * 60 * 1000); // Every 5 minutes
+    setInterval(checkReminders, 5 * 60 * 1000); // Every 5 minutes
   } catch (err) {
     console.error("❌ MongoDB connection error", err);
   }
