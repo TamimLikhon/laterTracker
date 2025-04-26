@@ -1,4 +1,5 @@
+import mongoose from "mongoose";
 import ReminderSchema from "../schema/userReminder";
 
-const Reminder = models.Reminder || model("Reminder", ReminderSchema);
+const Reminder = mongoose.models.Reminder || mongoose.model("Reminder", ReminderSchema);
 export default Reminder;
