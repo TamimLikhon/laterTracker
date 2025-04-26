@@ -1,4 +1,4 @@
-import dbConnect from "@/backend/lib/db";
+import {dbConnect} from "@/backend/lib/db";
 import Reminder from "@/backend/models/Reminder";
 import { NextResponse } from "next/server";
 
