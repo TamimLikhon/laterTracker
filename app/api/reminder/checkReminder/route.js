@@ -2,7 +2,7 @@ import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
 import { NextResponse } from 'next/server';
 
-// MongoDB setup
+// MongoDB setup done
 const MONGODB_URI = process.env.MONGODB_URI;
 const dbName = "WatchReminder";
 const collectionName = "reminders";
