@@ -1,3 +1,5 @@
+//updated
+
 import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
 
@@ -15,6 +17,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Email sender function
 async function sendReminderEmail(to, url) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -27,7 +30,13 @@ async function sendReminderEmail(to, url) {
   console.log(`✅ Reminder sent to ${to}`);
 }
 
-export async function GET() {
+export async function GET(request) {
+  // 🔒 Validate secret header
+  const secret = request.headers.get("x-cron-secret");
+  if (secret !== process.env.CRON_SECRET) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -57,11 +66,13 @@ export async function GET() {
 
     return new Response(JSON.stringify({ success: true, count: reminders.length }), {
       status: 200,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("❌ API Error", error);
     return new Response(JSON.stringify({ success: false, error: error.message }), {
       status: 500,
+      headers: { "Content-Type": "application/json" },
     });
   }
 }
