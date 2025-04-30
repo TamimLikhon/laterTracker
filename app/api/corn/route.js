@@ -1,7 +1,6 @@
-//updated
-
 import { MongoClient, ObjectId } from "mongodb";
 import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
 
 // MongoDB Setup
 const client = new MongoClient(process.env.MONGODB_URI);
@@ -17,7 +16,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Email sender function
 async function sendReminderEmail(to, url) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -30,11 +28,16 @@ async function sendReminderEmail(to, url) {
   console.log(`✅ Reminder sent to ${to}`);
 }
 
-export async function GET(request) {
-  // 🔒 Validate secret header
-  const secret = request.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET) {
-    return new Response("Unauthorized", { status: 401 });
+export async function GET(req) {
+  // ✅ Check Authorization header
+  const authHeader = req.headers.get("authorization");
+  const token = authHeader?.replace("Bearer ", "");
+
+  if (token !== process.env.CRON_SECRET) {
+    return NextResponse.json(
+      { error: "Unauthorized access. Invalid token." },
+      { status: 401 }
+    );
   }
 
   try {
@@ -64,15 +67,9 @@ export async function GET(request) {
       }
     }
 
-    return new Response(JSON.stringify({ success: true, count: reminders.length }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json({ success: true, count: reminders.length }, { status: 200 });
   } catch (error) {
     console.error("❌ API Error", error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

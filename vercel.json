@@ -2,10 +2,7 @@
   "crons": [
     {
       "path": "/api/corn",
-      "schedule": "0 7 * * *",
-      "headers": {
-        "x-cron-secret": "@CRON_SECRET"
-      }
+      "schedule": "0 7 * * *"
     }
   ]
 }
